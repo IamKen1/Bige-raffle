@@ -234,7 +234,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
 
         <motion.button 
           onClick={drawWinner} 
-          className="mt-8 bg-amber-700 text-white py-4 px-12 rounded-xl font-carnival text-xl shadow-xl 
+          className="mt-5 bg-amber-700 text-white py-3 px-5 rounded-xl font-carnival text-md shadow-xl 
                  hover:bg-amber-600 transition-all border-2 border-amber-500 
                  hover:shadow-amber-400/50 transform hover:-translate-y-1"
           whileHover={{ scale: 1.05 }}
@@ -250,7 +250,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
             <div className="flex gap-2">
               <motion.button
                 onClick={() => setShowWinners(!showWinners)}
-                className="bg-amber-600/80 text-white w-8 h-8 rounded-lg flex items-center justify-center"
+                className="bg-amber-600/80 text-white w-5 h-5 rounded-lg flex items-center justify-center"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 title={showWinners ? "Hide Winners" : "Show Winners"}
@@ -259,7 +259,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
               </motion.button>
               <motion.button
                 onClick={exportWinners}
-                className="bg-green-600/80 text-white w-8 h-8 rounded-lg flex items-center justify-center"
+                className="bg-green-600/80 text-white w-5 h-5 rounded-lg flex items-center justify-center"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 title="Export to Excel"
