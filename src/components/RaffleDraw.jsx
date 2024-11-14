@@ -255,7 +255,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 whileTap={{ scale: 0.9 }}
                 title={showWinners ? "Hide Winners" : "Show Winners"}
               >
-                {showWinners ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                {showWinners ? <FaEyeSlash size={16} style={{ color: 'white' }} /> : <FaEye size={16} style={{ color: 'white' }} />}
               </motion.button>
               <motion.button
                 onClick={exportWinners}
@@ -264,7 +264,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 whileTap={{ scale: 0.9 }}
                 title="Export to Excel"
               >
-                <FaFileExcel size={16} />
+                <FaFileExcel size={16} style={{ color: 'white' }} />
               </motion.button>
             </div>
 
