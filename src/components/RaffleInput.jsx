@@ -47,7 +47,7 @@ const RaffleInput = ({ onParticipantsUpdate }) => {
       animate={{ opacity: 1 }}
       transition={{ duration: 0.5 }}
     >
-      <h2 className="text-xl text-gray-700 mb-4">Add Participantss</h2>
+      <h2 className="text-xl text-gray-700 mb-4">Add Participants</h2>
       
       <div className="space-y-4">
         {/* Excel Upload Section */}
