@@ -160,7 +160,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
               ease: "easeInOut"
             }}
           >
-            The Winner is
+            The Winner iss
           </motion.h2>
           <div className="absolute inset-0 bg-gradient-to-r from-yellow-300/20 via-amber-500/20 to-yellow-300/20 blur-xl" />
           <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/10 to-yellow-500/10 rounded-full animate-pulse" />
