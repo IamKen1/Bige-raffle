@@ -6,6 +6,14 @@ import ParticipantList from "../components/ParticipantList";
 const Home = ({ onStartRaffle }) => {
   const [participants, setParticipants] = useState([]);
 
+  const removeParticipant = (index) => {
+    setParticipants((prevParticipants) => prevParticipants.filter((_, i) => i !== index));
+  };
+
+  const clearParticipants = () => {
+    setParticipants([]);
+  };
+
   return (
     <div className="flex flex-col items-center justify-start w-screen min-h-screen  overflow-y-auto p-8">
       <div className="w-full max-w-4xl space-y-8">
@@ -18,7 +26,11 @@ const Home = ({ onStartRaffle }) => {
           BigE Raffle
         </motion.h1>
         <RaffleInput onParticipantsUpdate={setParticipants} />
-        <ParticipantList participants={participants} />
+        <ParticipantList 
+          participants={participants} 
+          onRemoveParticipant={removeParticipant} 
+          onClearParticipants={clearParticipants} 
+        />
         {participants.length > 0 && (
           <motion.button
             onClick={() => onStartRaffle(participants)}

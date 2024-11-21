@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 
 const RaffleInput = ({ onParticipantsUpdate }) => {
   const [manualInput, setManualInput] = useState("");
+  const [uploadedFileName, setUploadedFileName] = useState("");
 
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
@@ -24,7 +25,8 @@ const RaffleInput = ({ onParticipantsUpdate }) => {
           .map((name) => (typeof name === "string" ? name.trim() : ""))
           .filter((name) => name && name.toLowerCase() !== "participant names"); // Skip header row if present
 
-        onParticipantsUpdate(cleanedNames);
+        onParticipantsUpdate((prevNames) => [...prevNames, ...cleanedNames]);
+        setUploadedFileName(file.name);
       } catch (error) {
         console.error("Error reading Excel file:", error);
       }
@@ -37,7 +39,14 @@ const RaffleInput = ({ onParticipantsUpdate }) => {
       .split("\n")
       .map((name) => name.trim())
       .filter(Boolean);
-    onParticipantsUpdate(names);
+    onParticipantsUpdate((prevNames) => [...prevNames, ...names]);
+    setManualInput("");
+  };
+
+  const clearParticipants = () => {
+    onParticipantsUpdate([]);
+    setManualInput("");
+    setUploadedFileName("");
   };
 
   return (
@@ -58,7 +67,7 @@ const RaffleInput = ({ onParticipantsUpdate }) => {
               <svg className="w-6 h-6 mb-2 text-gray-500" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 20 16">
                 <path stroke="currentColor" strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 13h3a3 3 0 0 0 0-6h-.025A5.56 5.56 0 0 0 16 6.5 5.5 5.5 0 0 0 5.207 5.021C5.137 5.017 5.071 5 5 5a4 4 0 0 0 0 8h2.167M10 15V6m0 0L8 8m2-2 2 2"/>
               </svg>
-              <p className="text-sm text-gray-500">Click to upload Excel file</p>
+              <p className="text-sm text-gray-500">{uploadedFileName || "Click to upload Excel file"}</p>
             </div>
             <input 
               type="file" 
@@ -79,14 +88,24 @@ const RaffleInput = ({ onParticipantsUpdate }) => {
             value={manualInput}
             onChange={(e) => setManualInput(e.target.value)}
           />
-          <motion.button 
-            onClick={handleManualInput} 
-            className="mt-2 bg-blue-500 text-white py-1.5 px-4 rounded text-sm hover:bg-blue-600"
-            whileHover={{ scale: 1.01 }}
-            whileTap={{ scale: 0.99 }}
-          >
-            Add Names
-          </motion.button>
+          <div className="flex justify-between mt-2">
+            <motion.button 
+              onClick={handleManualInput} 
+              className="bg-blue-500 text-white py-1.5 px-4 rounded text-sm hover:bg-blue-600"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
+              Add Names
+            </motion.button>
+            <motion.button 
+              onClick={clearParticipants} 
+              className="bg-red-500 text-white py-1.5 px-4 rounded text-sm hover:bg-red-600"
+              whileHover={{ scale: 1.01 }}
+              whileTap={{ scale: 0.99 }}
+            >
+              Clear Participants
+            </motion.button>
+          </div>
         </div>
       </div>
     </motion.div>
