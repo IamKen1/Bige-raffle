@@ -90,10 +90,10 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
 
   // Add responsive font size calculation
   const calculateFontSize = (name) => {
-    if (!name) return '6xl';
-    if (name.length > 15) return '4xl';
-    if (name.length > 10) return '5xl';
-    return '6xl';
+    if (!name) return '70px';
+    if (name.length > 15) return '50px';
+    if (name.length > 10) return '60px';
+    return '70px';
   };
 
   const exportWinners = () => {
@@ -204,9 +204,10 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 ].map((name, index) => (
                   <div
                     key={`${name}-${index}`}
-                    className={`py-4 px-6 font-carnival text-amber-900 whitespace-nowrap text-${calculateFontSize(name)}`}
+                    className={`py-4 px-6 font-carnival text-amber-900 whitespace-nowrap`}
                     style={{
                       height: `${itemHeight}px`,
+                      fontSize: calculateFontSize(name),
                       textShadow: '4px 4px 8px rgba(255,255,255,0.4)' // Enhanced shadow for larger text
                     }}
                   >
@@ -223,8 +224,8 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: "spring", duration: 1 }} // Increased from 0.5
               >
-                <span className={`font-carnival text-amber-900 text-${calculateFontSize(winner || message)}`}
-                      style={{ textShadow: '3px 3px 6px rgba(255,255,255,0.4)' }}>
+                <span className={`font-carnival text-amber-900`}
+                      style={{ fontSize: calculateFontSize(winner || message), textShadow: '3px 3px 6px rgba(255,255,255,0.4)' }}>
                   {winner || message || "Ready to Draw!"}
                 </span>
               </motion.div>
