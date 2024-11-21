@@ -18,8 +18,8 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
   
   // Adjust these values to control the animation
   const itemHeight = 140; // Increased from 100 to accommodate larger text
-  const baseSpinDuration = 4; // Base duration for many participants
-  const minSpinDuration = 2; // Minimum spin duration for few participants
+  const baseSpinDuration = 10; // Further increased duration for smoother animation
+  const minSpinDuration = 6; // Further increased minimum duration for smoother animation
   const numberOfSpins = 2;
   const viewportOffset = -itemHeight / 2; // Center alignment offset
 
@@ -41,6 +41,14 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       return;
     }
 
+    if (remainingParticipants.length === 1) {
+      const selectedWinner = remainingParticipants[0];
+      setWinner(selectedWinner);
+      setWinners([...winners, selectedWinner]);
+      setMessage("Only one participant left. Automatically selected as the winner.");
+      return;
+    }
+
     setIsDrawing(true);
     setIsInfiniteSpinning(true);
     setMessage("");
@@ -58,7 +66,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       const spinHeight = remainingParticipants.length * itemHeight;
       const finalPosition = -(spinHeight * numberOfSpins + (randomIndex * itemHeight));
       setFinalY(finalPosition);
-    }, 2000); // Spin infinitely for 2 seconds before stopping
+    }, 5000); // Spin infinitely for 5 seconds before stopping
   };
 
   const handleAnimationComplete = () => {
@@ -167,7 +175,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
           <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/10 to-yellow-500/10 rounded-full animate-pulse" />
         </motion.div>
 
-        <div className="relative h-96 md:h-96 w-full bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
+        <div id="draw-container" className="relative h-[calc(100vh-350px)] md:h-[calc(100vh-350px)] w-full bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
           {/* Winner indicator with brighter colors */}
           <div className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-amber-500/50 border-y-2 border-amber-600" />
           
@@ -189,8 +197,8 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                   : { y: finalY }
                 }
                 transition={!isInfiniteSpinning ? {
-                  duration: calculateSpinDuration(getRemainingParticipants().length),
-                  ease: [0.19, 0.82, 0.84, 1],
+                  duration: calculateSpinDuration(getRemainingParticipants().length) + 3, // Add extra duration for a slower stop
+                  ease: [0.42, 0, 0.58, 1], // Changed easing for a more natural stop
                   type: "spring",
                   stiffness: 50,
                   damping: 20
@@ -224,7 +232,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: "spring", duration: 1 }} // Increased from 0.5
               >
-                <span className="font-carnival text-amber-900 custom-font-size"
+                <span className="font-carnival text-amber-900 text-7xl md:text-9xl custom-font-size"
                       style={{ textShadow: '3px 3px 6px rgba(255,255,255,0.4)' }}>
                   {winner || message || "Ready to Draw!"}
                 </span>
