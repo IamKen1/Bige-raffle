@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FaEye, FaEyeSlash, FaFileExcel } from "react-icons/fa";
+import { Visibility, VisibilityOff, SaveAlt, Replay } from '@mui/icons-material';
 import carnival1 from "../assets/carnival1.jpg";
 import soundManager from "../utils/sound";
 import * as XLSX from "xlsx";
@@ -78,6 +78,9 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       if (selectedWinner) {
         setWinner(selectedWinner);
         setWinners([...winners, selectedWinner]);
+        // Ensure the animation stops at the winner
+        const finalPosition = -(remainingParticipants.length * itemHeight * numberOfSpins + (randomIndex * itemHeight));
+        setFinalY(finalPosition);
       }
       setIsDrawing(false);
     }
@@ -86,14 +89,6 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
   // Add this helper function to get remaining participants
   const getRemainingParticipants = () => {
     return participants.filter(participant => !winners.includes(participant));
-  };
-
-  // Add responsive font size calculation
-  const calculateFontSize = (name) => {
-    if (!name) return '6xl';
-    if (name.length > 15) return '4xl';
-    if (name.length > 10) return '5xl';
-    return '6xl';
   };
 
   const exportWinners = () => {
@@ -107,6 +102,12 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
     
     XLSX.utils.book_append_sheet(wb, ws, "Winners");
     XLSX.writeFile(wb, "raffle-winners.xlsx");
+  };
+
+  const clearWinners = () => {
+    setWinners([]);
+    setWinner("");
+    setMessage("Ready to draw again!");
   };
 
   useEffect(() => {
@@ -166,9 +167,9 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
           <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/10 to-yellow-500/10 rounded-full animate-pulse" />
         </motion.div>
 
-        <div className="relative h- md:h-64 w-full bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
+        <div className="relative h-96 md:h-96 w-full bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
           {/* Winner indicator with brighter colors */}
-          <div className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-16 bg-amber-500/50 border-y-2 border-amber-600" />
+          <div className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-amber-500/50 border-y-2 border-amber-600" />
           
           {isDrawing ? (
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden z-20">
@@ -204,7 +205,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 ].map((name, index) => (
                   <div
                     key={`${name}-${index}`}
-                    className={`py-4 px-6 font-carnival text-amber-900 whitespace-nowrap text-${calculateFontSize(name)}`}
+                    className="py-4 px-6 font-carnival text-amber-900 whitespace-nowrap custom-font-size"
                     style={{
                       height: `${itemHeight}px`,
                       textShadow: '4px 4px 8px rgba(255,255,255,0.4)' // Enhanced shadow for larger text
@@ -223,7 +224,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 animate={{ scale: 1, opacity: 1 }}
                 transition={{ type: "spring", duration: 1 }} // Increased from 0.5
               >
-                <span className={`font-carnival text-amber-900 text-${calculateFontSize(winner || message)}`}
+                <span className="font-carnival text-amber-900 custom-font-size"
                       style={{ textShadow: '3px 3px 6px rgba(255,255,255,0.4)' }}>
                   {winner || message || "Ready to Draw!"}
                 </span>
@@ -234,7 +235,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
 
         <motion.button 
           onClick={drawWinner} 
-          className="mt-8 bg-amber-700 text-white py-4 px-12 rounded-xl font-carnival text-xl shadow-xl 
+          className="mt-5 bg-amber-700 text-white py-3 px-5 rounded-xl font-carnival text-md shadow-xl 
                  hover:bg-amber-600 transition-all border-2 border-amber-500 
                  hover:shadow-amber-400/50 transform hover:-translate-y-1"
           whileHover={{ scale: 1.05 }}
@@ -247,27 +248,35 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
 
         {winners.length > 0 && (
           <div className="flex flex-col items-center mt-4">
-            <div className="flex gap-2">
+            <div className="flex gap-2 mb-2">
               <motion.button
                 onClick={() => setShowWinners(!showWinners)}
-                className="bg-amber-600/80 text-white w-8 h-8 rounded-lg flex items-center justify-center"
+                className="bg-amber-600/80 text-white w-10 h-10 rounded-lg flex items-center justify-center"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 title={showWinners ? "Hide Winners" : "Show Winners"}
               >
-                {showWinners ? <FaEyeSlash size={16} /> : <FaEye size={16} />}
+                {showWinners ? <VisibilityOff /> : <Visibility />}
               </motion.button>
               <motion.button
                 onClick={exportWinners}
-                className="bg-green-600/80 text-white w-8 h-8 rounded-lg flex items-center justify-center"
+                className="bg-green-600/80 text-white w-10 h-10 rounded-lg flex items-center justify-center"
                 whileHover={{ scale: 1.1 }}
                 whileTap={{ scale: 0.9 }}
                 title="Export to Excel"
               >
-                <FaFileExcel size={16} />
+                <SaveAlt />
+              </motion.button>
+              <motion.button
+                onClick={clearWinners}
+                className="bg-red-600/80 text-white w-10 h-10 rounded-lg flex items-center justify-center"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.9 }}
+                title="Clear Winners"
+              >
+                <Replay />
               </motion.button>
             </div>
-
             <AnimatePresence>
               {showWinners && (
                 <motion.div
