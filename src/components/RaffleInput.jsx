@@ -59,7 +59,7 @@ const RaffleInput = ({ onParticipantsUpdate }) => {
       <h2 className="text-xl text-gray-700 mb-4">Add Participants</h2>
       
       <div className="space-y-4">
-        {/* Excel Upload Section */}
+        {/* Excel Upload Sections */}
         <div className="p-3 border border-gray-200 rounded-lg">
           <h3 className="text-sm text-gray-600 mb-2">Upload Excel File</h3>
           <label className="flex flex-col items-center justify-center w-full h-24 border border-gray-300 border-dashed rounded-lg cursor-pointer hover:bg-gray-50">
