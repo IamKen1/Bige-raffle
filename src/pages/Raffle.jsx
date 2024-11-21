@@ -2,7 +2,7 @@ import React from "react";
 import RaffleDraw from "../components/RaffleDraw";
 
 const Raffle = ({ participants, winners, setWinners }) => (
-  <div className="flex items-center justify-center w-screen min-h-screen bg-yellow-100">
+  <div className="flex items-center justify-center w-screen min-h-screen bg-yellow-100 font-carnival">
     <RaffleDraw participants={participants} winners={winners} setWinners={setWinners} />
   </div>
 );
