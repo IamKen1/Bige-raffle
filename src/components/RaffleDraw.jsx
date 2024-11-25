@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
+import Confetti from "react-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 import { Visibility, VisibilityOff, SaveAlt, Replay } from '@mui/icons-material';
 import carnival3 from "../assets/carnival3.jpg";
@@ -13,6 +14,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
   const [finalY, setFinalY] = useState(0);
   const [isInfiniteSpinning, setIsInfiniteSpinning] = useState(false);
   const [showWinners, setShowWinners] = useState(false);
+  const [isConfettiVisible, setIsConfettiVisible] = useState(false);
   const spinRef = useRef(null);
   const centerObserverRef = useRef(null);
   
@@ -32,7 +34,15 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
     );
   };
 
+  const calculateFontSize = (name) => {
+    const baseSize = 5; // Base font size in rem
+    const reducedSize = 4; // Reduced font size for long names
+    const maxLength = 18; // Maximum length before reducing size
+    return name.length > maxLength ? `${reducedSize}rem` : `${baseSize}rem`;
+  };
+
   const drawWinner = () => {
+    setIsConfettiVisible(false); // Stop confetti when drawing starts
     const remainingParticipants = participants.filter(
       (participant) => !winners.includes(participant)
     );
@@ -46,6 +56,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       setWinner(selectedWinner);
       setWinners([...winners, selectedWinner]);
       setMessage("Only one participant left. Automatically selected as the winner.");
+      setIsConfettiVisible(true); // Show confetti for the winner
       return;
     }
 
@@ -66,7 +77,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       const spinHeight = remainingParticipants.length * itemHeight;
       const finalPosition = -(spinHeight * numberOfSpins + (randomIndex * itemHeight));
       setFinalY(finalPosition);
-    }, 5000); // Spin infinitely for 5 seconds before stopping
+    }, 3000); // Spin infinitely for 3 seconds before stopping
   };
 
   const handleAnimationComplete = () => {
@@ -86,6 +97,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       if (selectedWinner) {
         setWinner(selectedWinner);
         setWinners([...winners, selectedWinner]);
+        setIsConfettiVisible(true); // Show confetti for the winner
         // Ensure the animation stops at the winner
         const finalPosition = -(remainingParticipants.length * itemHeight * numberOfSpins + (randomIndex * itemHeight));
         setFinalY(finalPosition);
@@ -139,40 +151,37 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
         backgroundRepeat: 'no-repeat',
         backgroundBlendMode: 'lighten',
       }}>
-      {/* Brighter overlay with rainbow gradient */}
+      {isConfettiVisible && <Confetti />}
       <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-red-500/30 to-pink-500/30" 
            style={{ mixBlendMode: 'screen' }} />
       
       <div className="relative z-10 w-full px-4 top-20">
-        <div id="draw-container" className="relative h-[calc(100vh-350px)] md:h-[calc(100vh-350px)] w-2/3 mx-auto  bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
-          {/* Winner indicator with brighter colors */}
+        <div id="draw-container" className="relative h-[60vh] w-full mx-auto bg-white/05 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl
+          sm:max-w-md md:max-w-4xl lg:max-w-4xl xl:max-w-4xl 2xl:max-w-5xl ">
           {!isDrawing && (
             <>
               {winner && (
                 <div className="absolute inset-x-0 top-1/4 transform -translate-y-1/2 flex items-center justify-center">
-                  <span className="font-carnival text-white text-4xl md:text-6xl tracking-wider"
+                  <span className="font-cooper text-white text-4xl md:text-6xl tracking-wider"
                         style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
                     The Winner is
                   </span>
                 </div>
               )}
               <div id="winner-container" className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 border-y-2 border-amber-600 flex items-center justify-center px-4 rounded-lg shadow-lg">
-                {winner ? (
-                  <span className="font-carnival text-white text-5xl md:text-7xl whitespace-normal break-words text-center"
-                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
-                    {winner}
-                  </span>
-                ) : (
-                  <span className="font-carnival text-white text-5xl md:text-7xl whitespace-normal break-words text-center"
-                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
-                    Ready to Draw!
-                  </span>
-                )}
+                <span className="font-cooper text-white text-center"
+                      style={{
+                        whiteSpace: 'nowrap',
+                        overflow: 'hidden',
+                        fontSize: calculateFontSize(winner || "Ready to Draw!")
+                      }}>
+                  {winner || "Ready to Draw!"}
+                </span>
               </div>
             </>
           )}
           
-          {isDrawing ? (
+          {isDrawing && (
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden z-20">
               <motion.div
                 ref={spinRef}
@@ -206,7 +215,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 ].map((name, index) => (
                   <div
                     key={`${name}-${index}`}
-                    className="py-4 px-6 font-carnival text-white whitespace-nowrap bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 rounded-lg shadow-md"
+                    className="py-4 px-6 font-cooper text-white whitespace-nowrap bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 rounded-lg shadow-md"
                     style={{
                       height: `${itemHeight}px`,
                       fontSize: '3.5rem',
@@ -217,8 +226,13 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                   </div>
                 ))}
               </motion.div>
+              {/* Center line indicators */}
+              <div className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 flex flex-col items-center">
+                <div className="h-0.5 bg-amber-600 w-full max-w-4xl"></div>
+                <div className="h-0.5 bg-amber-600 w-full max-w-4xl mt-[80px]"></div>
+              </div>
             </div>
-          ) : null}
+          )}
         </div>
 
         <motion.button 

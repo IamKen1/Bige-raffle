@@ -12,7 +12,8 @@ module.exports = {
       },
       fontFamily: {
         sans: ["'Poppins'", "system-ui", "Avenir", "Helvetica", "Arial", "sans-serif"],
-        carnival: ["'Carnival'", "cursive"], // Add this line
+        carnival: ["'Carnival'", "cursive"],
+        cooper: ["'Cooper Std'", "serif"],
       },
       fontSize: {
         'xs': '.75rem',
