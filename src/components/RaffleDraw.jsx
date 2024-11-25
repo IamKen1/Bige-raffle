@@ -143,47 +143,33 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-red-500/30 to-pink-500/30" 
            style={{ mixBlendMode: 'screen' }} />
       
-      <div className="relative z-10 w-full px-4">
-        <motion.div 
-          className="relative mb-12"
-          initial={{ opacity: 0, y: -50 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.8 }}
-        >
-          <motion.h2 
-            className="font-carnival text-6xl md:text-8xl text-yellow-300 relative z-10 tracking-wider"
-            style={{ 
-              textShadow: `
-                4px 4px 0px rgba(0,0,0,0.8),
-                8px 8px 0px rgba(0,0,0,0.4)
-              `,
-              WebkitTextStroke: '2px rgba(0,0,0,0.3)'
-            }}
-            animate={{ 
-              scale: [1, 1.02, 1],
-              rotate: [-1, 1, -1]
-            }}
-            transition={{ 
-              duration: 4,
-              repeat: Infinity,
-              ease: "easeInOut"
-            }}
-          >
-            The Winner is
-          </motion.h2>
-          <div className="absolute inset-0 bg-gradient-to-r from-yellow-300/20 via-amber-500/20 to-yellow-300/20 blur-xl" />
-          <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/10 to-yellow-500/10 rounded-full animate-pulse" />
-        </motion.div>
-
-        <div id="draw-container" className="relative h-[calc(100vh-350px)] md:h-[calc(100vh-350px)] w-2/3 mx-auto bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
+      <div className="relative z-10 w-full px-4 top-20">
+        <div id="draw-container" className="relative h-[calc(100vh-350px)] md:h-[calc(100vh-350px)] w-2/3 mx-auto  bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
           {/* Winner indicator with brighter colors */}
           {!isDrawing && (
-            <div id="winner-container" className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-amber-500/50 border-y-2 border-amber-600 flex items-center justify-center px-4">
-              <span className="font-carnival text-amber-900 text-5xl md:text-7xl whitespace-normal break-words text-center"
-                    style={{ textShadow: '3px 3px 6px rgba(255,255,255,0.4)' }}>
-                {winner || message || "Ready to Draw!"}
-              </span>
-            </div>
+            <>
+              {winner && (
+                <div className="absolute inset-x-0 top-1/4 transform -translate-y-1/2 flex items-center justify-center">
+                  <span className="font-carnival text-white text-4xl md:text-6xl tracking-wider"
+                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
+                    The Winner is
+                  </span>
+                </div>
+              )}
+              <div id="winner-container" className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 border-y-2 border-amber-600 flex items-center justify-center px-4 rounded-lg shadow-lg">
+                {winner ? (
+                  <span className="font-carnival text-white text-5xl md:text-7xl whitespace-normal break-words text-center"
+                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
+                    {winner}
+                  </span>
+                ) : (
+                  <span className="font-carnival text-white text-5xl md:text-7xl whitespace-normal break-words text-center"
+                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
+                    Ready to Draw!
+                  </span>
+                )}
+              </div>
+            </>
           )}
           
           {isDrawing ? (
@@ -220,11 +206,11 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 ].map((name, index) => (
                   <div
                     key={`${name}-${index}`}
-                    className="py-4 px-6 font-carnival text-amber-900 whitespace-nowrap"
+                    className="py-4 px-6 font-carnival text-white whitespace-nowrap bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 rounded-lg shadow-md"
                     style={{
                       height: `${itemHeight}px`,
                       fontSize: '3.5rem',
-                      textShadow: '4px 4px 8px rgba(255,255,255,0.4)'
+                      textShadow: '2px 2px 4px rgba(0,0,0,0.6)'
                     }}
                   >
                     {name}
