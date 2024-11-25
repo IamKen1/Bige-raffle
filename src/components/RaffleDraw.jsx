@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Visibility, VisibilityOff, SaveAlt, Replay } from '@mui/icons-material';
-import carnival1 from "../assets/carnival1.jpg";
+import carnival3 from "../assets/carnival3.jpg";
 import soundManager from "../utils/sound";
 import * as XLSX from "xlsx";
 
@@ -133,7 +133,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
   return (
     <div className="w-screen min-h-screen flex items-center justify-center text-center relative"
       style={{
-        backgroundImage: `url(${carnival1})`,
+        backgroundImage: `url(${carnival3})`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
         backgroundRepeat: 'no-repeat',
@@ -151,13 +151,13 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
           transition={{ duration: 0.8 }}
         >
           <motion.h2 
-            className="font-carnival text-6xl md:text-8xl text-amber-900 relative z-10 tracking-wider"
+            className="font-carnival text-6xl md:text-8xl text-yellow-300 relative z-10 tracking-wider"
             style={{ 
               textShadow: `
-                4px 4px 0px rgba(255,255,255,0.8),
-                8px 8px 0px rgba(255,187,51,0.4)
+                4px 4px 0px rgba(0,0,0,0.8),
+                8px 8px 0px rgba(0,0,0,0.4)
               `,
-              WebkitTextStroke: '2px rgba(139,69,19,0.3)'
+              WebkitTextStroke: '2px rgba(0,0,0,0.3)'
             }}
             animate={{ 
               scale: [1, 1.02, 1],
@@ -175,9 +175,16 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
           <div className="absolute -inset-1 bg-gradient-to-r from-amber-600/10 to-yellow-500/10 rounded-full animate-pulse" />
         </motion.div>
 
-        <div id="draw-container" className="relative h-[calc(100vh-350px)] md:h-[calc(100vh-350px)] w-full bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
+        <div id="draw-container" className="relative h-[calc(100vh-350px)] md:h-[calc(100vh-350px)] w-2/3 mx-auto bg-white/30 backdrop-blur-sm rounded-xl overflow-hidden border-4 border-amber-600 shadow-2xl">
           {/* Winner indicator with brighter colors */}
-          <div className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-amber-500/50 border-y-2 border-amber-600" />
+          {!isDrawing && (
+            <div id="winner-container" className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-amber-500/50 border-y-2 border-amber-600 flex items-center justify-center px-4">
+              <span className="font-carnival text-amber-900 text-5xl md:text-7xl whitespace-normal break-words text-center"
+                    style={{ textShadow: '3px 3px 6px rgba(255,255,255,0.4)' }}>
+                {winner || message || "Ready to Draw!"}
+              </span>
+            </div>
+          )}
           
           {isDrawing ? (
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden z-20">
@@ -197,8 +204,8 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                   : { y: finalY }
                 }
                 transition={!isInfiniteSpinning ? {
-                  duration: calculateSpinDuration(getRemainingParticipants().length) + 3, // Add extra duration for a slower stop
-                  ease: [0.42, 0, 0.58, 1], // Changed easing for a more natural stop
+                  duration: calculateSpinDuration(getRemainingParticipants().length) + 3,
+                  ease: [0.42, 0, 0.58, 1],
                   type: "spring",
                   stiffness: 50,
                   damping: 20
@@ -209,14 +216,15 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                   ...getRemainingParticipants(),
                   ...getRemainingParticipants(),
                   ...getRemainingParticipants(),
-                  ...getRemainingParticipants() // Add one more repeat for smoother infinite scroll
+                  ...getRemainingParticipants()
                 ].map((name, index) => (
                   <div
                     key={`${name}-${index}`}
-                    className="py-4 px-6 font-carnival text-amber-900 whitespace-nowrap custom-font-size"
+                    className="py-4 px-6 font-carnival text-amber-900 whitespace-nowrap"
                     style={{
                       height: `${itemHeight}px`,
-                      textShadow: '4px 4px 8px rgba(255,255,255,0.4)' // Enhanced shadow for larger text
+                      fontSize: '3.5rem',
+                      textShadow: '4px 4px 8px rgba(255,255,255,0.4)'
                     }}
                   >
                     {name}
@@ -224,21 +232,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 ))}
               </motion.div>
             </div>
-          ) : (
-            <AnimatePresence>
-              <motion.div
-                className="absolute inset-0 flex items-center justify-center p-4"
-                initial={{ scale: 0.5, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                transition={{ type: "spring", duration: 1 }} // Increased from 0.5
-              >
-                <span className="font-carnival text-amber-900 text-7xl md:text-9xl custom-font-size"
-                      style={{ textShadow: '3px 3px 6px rgba(255,255,255,0.4)' }}>
-                  {winner || message || "Ready to Draw!"}
-                </span>
-              </motion.div>
-            </AnimatePresence>
-          )}
+          ) : null}
         </div>
 
         <motion.button 
