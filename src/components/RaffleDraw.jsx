@@ -152,17 +152,14 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
         backgroundBlendMode: 'lighten',
       }}>
       {isConfettiVisible && <Confetti />}
-      <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 via-red-500/30 to-pink-500/30" 
-           style={{ mixBlendMode: 'screen' }} />
-      
-      <div className="relative z-10 w-full px-4 top-20">
-        <div id="draw-container" className="relative h-[60vh] w-full mx-auto bg-white/05 backdrop-blur-sm rounded-xl overflow-hidden shadow-2xl
-          sm:max-w-md md:max-w-4xl lg:max-w-4xl xl:max-w-4xl 2xl:max-w-5xl ">
+      <div className="relative z-10 w-full px-4 top-24 max-w-screen-2xl mx-auto">
+        <div id="draw-container" className="relative h-[55vh] w-full mx-auto overflow-hidden 
+          sm:max-w-md md:max-w-4xl lg:max-w-2xl xl:max-w-2xl 2xl:max-w-6xl">
           {!isDrawing && (
             <>
               {winner && (
                 <div className="absolute inset-x-0 top-1/4 transform -translate-y-1/2 flex items-center justify-center">
-                  <span className="font-cooper text-white text-4xl md:text-6xl tracking-wider"
+                  <span className="font-cooper text-white text-2xl md:text-4xl lg:text-6xl xl:text-8xl tracking-wider"
                         style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
                     The Winner is
                   </span>
@@ -173,7 +170,8 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                       style={{
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
-                        fontSize: calculateFontSize(winner || "Ready to Draw!")
+                        fontSize: calculateFontSize(winner || "Ready to Draw!"),
+                        textShadow: '3px 3px 6px rgba(0,0,0,0.8)'
                       }}>
                   {winner || "Ready to Draw!"}
                 </span>
