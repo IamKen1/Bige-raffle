@@ -152,29 +152,42 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
         backgroundBlendMode: 'lighten',
       }}>
       {isConfettiVisible && <Confetti />}
-      <div className="relative z-10 w-full px-4 top-24 max-w-screen-2xl mx-auto">
-        <div id="draw-container" className="relative h-[55vh] w-full mx-auto   overflow-hidden 
+      <div className="relative z-10 w-full px-2 top-24 max-w-screen-2xl mx-auto">
+        <div id="draw-container" className="relative h-[55vh] my-10 w-full mx-auto overflow-hidden 
           sm:max-w-md md:max-w-4xl lg:max-w-2xl xl:max-w-2xl 2xl:max-w-6xl ">
           {!isDrawing && (
             <>
               {winner && (
-                <div className="absolute inset-x-0 top-1/4 transform -translate-y-1/2 flex items-center justify-center">
+                <motion.div
+                  className="absolute inset-x-0 top-1/4 transform -translate-y-1/2 flex items-center justify-center"
+                  initial={{ scale: 0.8, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ duration: 0.5, ease: "easeOut" }}
+                >
                   <span className="font-cooper text-white text-2xl md:text-4xl lg:text-6xl xl:text-8xl tracking-wider"
                         style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
                     The Winner is
                   </span>
-                </div>
+                </motion.div>
               )}
-              <div id="winner-container" className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 border-y-2 border-amber-600 flex items-center justify-center px-4 rounded-lg shadow-lg">
+              <motion.div
+                id="winner-container"
+                className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 border-y-2 border-amber-600 flex items-center justify-center px-4 rounded-lg shadow-lg"
+                initial={{ scale: 0.8, opacity: 0 }}
+                animate={{ scale: 1.1, opacity: 1 }}
+                transition={{ duration: 0.5, ease: "easeOut" }}
+              >
                 <span className="font-cooper text-white text-center"
                       style={{
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
-                        fontSize: calculateFontSize(winner || "Ready to Draw!")
+                        fontSize: calculateFontSize(winner || "Ready to Draw!"),
+                        textShadow: '3px 3px 6px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.5)',
+                        animation: 'glow 1.5s infinite alternate'
                       }}>
                   {winner || "Ready to Draw!"}
                 </span>
-              </div>
+              </motion.div>
             </>
           )}
           
