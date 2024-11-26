@@ -153,8 +153,8 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       }}>
       {isConfettiVisible && <Confetti />}
       <div className="relative z-10 w-full px-4 top-24 max-w-screen-2xl mx-auto">
-        <div id="draw-container" className="relative h-[55vh] w-full mx-auto overflow-hidden 
-          sm:max-w-md md:max-w-4xl lg:max-w-2xl xl:max-w-2xl 2xl:max-w-6xl">
+        <div id="draw-container" className="relative h-[55vh] w-full mx-auto   overflow-hidden 
+          sm:max-w-md md:max-w-4xl lg:max-w-2xl xl:max-w-2xl 2xl:max-w-6xl ">
           {!isDrawing && (
             <>
               {winner && (
@@ -170,8 +170,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                       style={{
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
-                        fontSize: calculateFontSize(winner || "Ready to Draw!"),
-                        textShadow: '3px 3px 6px rgba(0,0,0,0.8)'
+                        fontSize: calculateFontSize(winner || "Ready to Draw!")
                       }}>
                   {winner || "Ready to Draw!"}
                 </span>
