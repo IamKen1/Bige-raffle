@@ -103,3 +103,52 @@ button:focus-visible {
     background-color: #f9f9f9;
   }
 }
+@media (min-width: 4800px) and (min-height: 2700px) {
+  #draw-container {
+    height: 50vh !important; /* Adjust the height as needed */
+    width: 100% !important; /* Adjust the width as needed */
+    /* border: 1px solid red; */
+  }
+
+  .font-cooper {
+    font-size: 12rem !important; /* Adjust the font size as needed */
+  }
+  
+  .w-full{
+    min-width: 80% !important;
+  }
+
+  .winner-container {
+    font-size: 32rem !important; /* Adjust the font size for winner text */
+  }
+  button {
+    height: 130px !important;
+    font-size: 4rem !important;
+    margin-inline: 10px !important;
+    margin-block: 10px !important;
+  }
+svg {
+  width: 100px !important; /* Adjust the width as needed */
+  height: 100% !important; /* Adjust the height as needed */
+}
+h2{
+  font-size: 5rem !important;
+}
+h3{
+  font-size: 4rem !important;
+}
+p{
+  font-size: 2rem !important;
+}
+textarea{
+  font-size: 2rem !important;
+}
+li{
+  font-size: 2rem !important;
+}
+.text-lg{
+  font-size: 2rem !important;
+  color: #f9f9f9;
+  text-shadow: #1a1a1a;
+}
+}

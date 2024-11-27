@@ -2,7 +2,7 @@ import React, { useState, useEffect, useRef } from "react";
 import Confetti from "react-confetti";
 import { motion, AnimatePresence } from "framer-motion";
 import { Visibility, VisibilityOff, SaveAlt, Replay } from '@mui/icons-material';
-import carnival3 from "../assets/carnival3.jpg";
+import carnival3 from "../assets/carnival4.jpg";
 import soundManager from "../utils/sound";
 import * as XLSX from "xlsx";
 
@@ -10,39 +10,22 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
   const [winner, setWinner] = useState("");
   const [isDrawing, setIsDrawing] = useState(false);
   const [message, setMessage] = useState("");
-  const [initialY, setInitialY] = useState(0);
-  const [finalY, setFinalY] = useState(0);
-  const [isInfiniteSpinning, setIsInfiniteSpinning] = useState(false);
   const [showWinners, setShowWinners] = useState(false);
   const [isConfettiVisible, setIsConfettiVisible] = useState(false);
-  const spinRef = useRef(null);
-  const centerObserverRef = useRef(null);
-  
-  // Adjust these values to control the animation
-  const itemHeight = 140; // Increased from 100 to accommodate larger text
-  const baseSpinDuration = 10; // Further increased duration for smoother animation
-  const minSpinDuration = 6; // Further increased minimum duration for smoother animation
-  const numberOfSpins = 2;
-  const viewportOffset = -itemHeight / 2; // Center alignment offset
+  const [flashingIndex, setFlashingIndex] = useState(0);
+  const flashingIntervalRef = useRef(null);
 
-  const calculateSpinDuration = (participantCount) => {
-    // Adjust duration based on participant count
-    // More participants = longer duration, fewer participants = shorter duration
-    return Math.max(
-      minSpinDuration,
-      Math.min(baseSpinDuration, participantCount * 0.3)
-    );
-  };
+  const itemHeight = 140;
 
   const calculateFontSize = (name) => {
-    const baseSize = 5; // Base font size in rem
-    const reducedSize = 4; // Reduced font size for long names
-    const maxLength = 18; // Maximum length before reducing size
+    const baseSize = 5;
+    const reducedSize = 4;
+    const maxLength = 18;
     return name.length > maxLength ? `${reducedSize}rem` : `${baseSize}rem`;
   };
 
   const drawWinner = () => {
-    setIsConfettiVisible(false); // Stop confetti when drawing starts
+    setIsConfettiVisible(false);
     const remainingParticipants = participants.filter(
       (participant) => !winners.includes(participant)
     );
@@ -51,62 +34,27 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       return;
     }
 
-    if (remainingParticipants.length === 1) {
-      const selectedWinner = remainingParticipants[0];
+    setIsDrawing(true);
+    setMessage("");
+
+    soundManager.playSpinning();
+
+    flashingIntervalRef.current = setInterval(() => {
+      setFlashingIndex((prevIndex) => (prevIndex + 1) % remainingParticipants.length);
+    }, 100);
+
+    setTimeout(() => {
+      clearInterval(flashingIntervalRef.current);
+      const selectedWinner = remainingParticipants[flashingIndex];
       setWinner(selectedWinner);
       setWinners([...winners, selectedWinner]);
-      setMessage("Only one participant left. Automatically selected as the winner.");
-      setIsConfettiVisible(true); // Show confetti for the winner
-      return;
-    }
-
-    setIsDrawing(true);
-    setIsInfiniteSpinning(true);
-    setMessage("");
-    
-    // Start spinning sound
-    soundManager.playSpinning();
-    
-    const currentSpinDuration = calculateSpinDuration(remainingParticipants.length);
-    const randomIndex = Math.floor(Math.random() * remainingParticipants.length);
-    
-    // Start with infinite spinning
-    setTimeout(() => {
-      setIsInfiniteSpinning(false);
-      // Calculate final position for the stop
-      const spinHeight = remainingParticipants.length * itemHeight;
-      const finalPosition = -(spinHeight * numberOfSpins + (randomIndex * itemHeight));
-      setFinalY(finalPosition);
-    }, 3000); // Spin infinitely for 3 seconds before stopping
-  };
-
-  const handleAnimationComplete = () => {
-    if (!isInfiniteSpinning) {
-      // Stop spinning sound and play win sound
+      setIsConfettiVisible(true);
+      setIsDrawing(false);
       soundManager.stopSpinning();
       soundManager.playWin();
-
-      const remainingParticipants = participants.filter(
-        (participant) => !winners.includes(participant)
-      );
-      
-      // Randomly select a winner from remaining participants
-      const randomIndex = Math.floor(Math.random() * remainingParticipants.length);
-      const selectedWinner = remainingParticipants[randomIndex];
-      
-      if (selectedWinner) {
-        setWinner(selectedWinner);
-        setWinners([...winners, selectedWinner]);
-        setIsConfettiVisible(true); // Show confetti for the winner
-        // Ensure the animation stops at the winner
-        const finalPosition = -(remainingParticipants.length * itemHeight * numberOfSpins + (randomIndex * itemHeight));
-        setFinalY(finalPosition);
-      }
-      setIsDrawing(false);
-    }
+    }, 2000);
   };
 
-  // Add this helper function to get remaining participants
   const getRemainingParticipants = () => {
     return participants.filter(participant => !winners.includes(participant));
   };
@@ -164,20 +112,20 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                   animate={{ scale: 1, opacity: 1 }}
                   transition={{ duration: 0.5, ease: "easeOut" }}
                 >
-                  <span className="font-cooper text-white text-2xl md:text-4xl lg:text-6xl xl:text-8xl tracking-wider"
-                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)' }}>
+                  <span className="font-cooper text-white tracking-wider raffle-winner-text"
+                        style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.6)', fontSize: '3.5rem' }}>
                     The Winner is
                   </span>
                 </motion.div>
               )}
               <motion.div
                 id="winner-container"
-                className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 border-y-2 border-amber-600 flex items-center justify-center px-4 rounded-lg shadow-lg"
+                className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 flex items-center justify-center px-4 rounded-lg shadow-lg"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1.1, opacity: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
-                <span className="font-cooper text-white text-center"
+                <span className="font-cooper text-white text-center raffle-winner-container"
                       style={{
                         whiteSpace: 'nowrap',
                         overflow: 'hidden',
@@ -194,59 +142,29 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
           {isDrawing && (
             <div className="absolute inset-0 flex items-center justify-center overflow-hidden z-20">
               <motion.div
-                ref={spinRef}
                 className="flex flex-col items-center justify-center h-[400px]"
-                initial={{ y: 0 }}
-                animate={isInfiniteSpinning 
-                  ? { 
-                      y: [-itemHeight * getRemainingParticipants().length, 0],
-                      transition: {
-                        duration: 1,
-                        repeat: Infinity,
-                        ease: "linear"
-                      }
-                    }
-                  : { y: finalY }
-                }
-                transition={!isInfiniteSpinning ? {
-                  duration: calculateSpinDuration(getRemainingParticipants().length) + 3,
-                  ease: [0.42, 0, 0.58, 1],
-                  type: "spring",
-                  stiffness: 50,
-                  damping: 20
-                } : undefined}
-                onAnimationComplete={!isInfiniteSpinning ? handleAnimationComplete : undefined}
+                initial={{ scale: 0.5, opacity: 0 }}
+                animate={{ scale: 1.5, opacity: 1 }}
+                transition={{ duration: 0.5, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
               >
-                {[
-                  ...getRemainingParticipants(),
-                  ...getRemainingParticipants(),
-                  ...getRemainingParticipants(),
-                  ...getRemainingParticipants()
-                ].map((name, index) => (
-                  <div
-                    key={`${name}-${index}`}
-                    className="py-4 px-6 font-cooper text-white whitespace-nowrap bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 rounded-lg shadow-md"
-                    style={{
-                      height: `${itemHeight}px`,
-                      fontSize: '3.5rem',
-                      textShadow: '2px 2px 4px rgba(0,0,0,0.6)'
-                    }}
-                  >
-                    {name}
-                  </div>
-                ))}
+                <div
+                  className="py-4 px-6 font-cooper text-white whitespace-nowrap bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 rounded-lg shadow-md"
+                  style={{
+                    height: `${itemHeight}px`,
+                    fontSize: '3.5rem',
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.6)'
+                  }}
+                >
+                  {getRemainingParticipants()[flashingIndex]}
+                </div>
               </motion.div>
-              {/* Center line indicators */}
-              <div className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 flex flex-col items-center">
-                <div className="h-0.5 bg-amber-600 w-full max-w-4xl"></div>
-                <div className="h-0.5 bg-amber-600 w-full max-w-4xl mt-[80px]"></div>
-              </div>
             </div>
           )}
         </div>
 
         <motion.button 
           onClick={drawWinner} 
+          id="draw-button"
           className="mt-5 bg-amber-700 text-white py-3 px-5 rounded-xl font-carnival text-md shadow-xl 
                  hover:bg-amber-600 transition-all border-2 border-amber-500 
                  hover:shadow-amber-400/50 transform hover:-translate-y-1"
@@ -254,7 +172,7 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
           whileTap={{ scale: 0.95 }}
           disabled={isDrawing}
           style={{ textShadow: '2px 2px 4px rgba(0,0,0,0.4)' }}
-        >
+        > 
           {isDrawing ? "Please wait..." : "Draw Winner"}
         </motion.button>
 

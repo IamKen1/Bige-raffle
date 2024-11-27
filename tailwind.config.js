@@ -30,6 +30,9 @@ module.exports = {
         '8xl': '6rem',
         '9xl': '8rem',
       },
+      screens: {
+        '4k': '4800px',
+      },
     },
   },
   plugins: [],
