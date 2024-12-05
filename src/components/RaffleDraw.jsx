@@ -14,49 +14,61 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
   const [isConfettiVisible, setIsConfettiVisible] = useState(false);
   const [flashingIndex, setFlashingIndex] = useState(0);
   const flashingIntervalRef = useRef(null);
+  
+  // Define remainingParticipants at component level
+  const remainingParticipants = participants.filter(
+    participant => !winners.includes(participant)
+  );
 
   const itemHeight = 140;
 
   const calculateFontSize = (name) => {
-    const baseSize = 5;
-    const reducedSize = 4;
-    const maxLength = 18;
+    if (!name) return `${3.5}rem`;  // default size
+    
+    const baseSize = 3.5;
+    const reducedSize = 2.8;
+    const maxLength = 20;
     return name.length > maxLength ? `${reducedSize}rem` : `${baseSize}rem`;
   };
 
   const drawWinner = () => {
-    setIsConfettiVisible(false);
-    const remainingParticipants = participants.filter(
-      (participant) => !winners.includes(participant)
-    );
     if (remainingParticipants.length === 0) {
-      setMessage("All participants have already been drawn. No more names left to draw.");
+      setMessage("All participants have been drawn!");
       return;
     }
 
+    // Stop confetti when drawing starts
+    setIsConfettiVisible(false);
     setIsDrawing(true);
     setMessage("");
-
+    
+    // Play spinning sound when animation starts
     soundManager.playSpinning();
-
-    flashingIntervalRef.current = setInterval(() => {
-      setFlashingIndex((prevIndex) => (prevIndex + 1) % remainingParticipants.length);
+    
+    // Start the spinning animation with remaining participants only
+    const animationInterval = setInterval(() => {
+      const randomIndex = Math.floor(Math.random() * remainingParticipants.length);
+      setFlashingIndex(randomIndex);
     }, 100);
 
     setTimeout(() => {
-      clearInterval(flashingIntervalRef.current);
-      const selectedWinner = remainingParticipants[flashingIndex];
-      setWinner(selectedWinner);
-      setWinners([...winners, selectedWinner]);
-      setIsConfettiVisible(true);
+      clearInterval(animationInterval);
       setIsDrawing(false);
+      
+      // Stop spinning sound and play win sound
       soundManager.stopSpinning();
       soundManager.playWin();
-    }, 2000);
-  };
-
-  const getRemainingParticipants = () => {
-    return participants.filter(participant => !winners.includes(participant));
+      
+      // Select final winner from remaining participants
+      const winnerIndex = Math.floor(Math.random() * remainingParticipants.length);
+      const selectedWinner = remainingParticipants[winnerIndex];
+      
+      setWinner(selectedWinner);
+      setWinners(prev => [selectedWinner, ...prev]);
+      
+      // Start confetti after winner is selected
+      setIsConfettiVisible(true);
+    }, 3000);
   };
 
   const exportWinners = () => {
@@ -90,6 +102,13 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
     };
   }, []);
 
+  // Add this effect to stop confetti when component unmounts
+  useEffect(() => {
+    return () => {
+      setIsConfettiVisible(false);
+    };
+  }, []);
+
   return (
     <div className="w-screen min-h-screen flex items-center justify-center text-center relative"
       style={{
@@ -120,18 +139,20 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
               )}
               <motion.div
                 id="winner-container"
-                className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-32 bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 flex items-center justify-center px-4 rounded-lg shadow-lg"
+                className="absolute inset-x-0 top-1/2 transform -translate-y-1/2 h-auto min-h-[8rem] flex items-center justify-center px-4 rounded-lg shadow-lg"
                 initial={{ scale: 0.8, opacity: 0 }}
                 animate={{ scale: 1.1, opacity: 1 }}
                 transition={{ duration: 0.5, ease: "easeOut" }}
               >
-                <span className="font-cooper text-white text-center raffle-winner-container"
+                <span className="font-cooper text-white text-center raffle-winner-container max-w-[80%]"
                       style={{
-                        whiteSpace: 'nowrap',
-                        overflow: 'hidden',
+                        whiteSpace: 'normal',
+                        overflow: 'visible',
                         fontSize: calculateFontSize(winner || "Ready to Draw!"),
                         textShadow: '3px 3px 6px rgba(0,0,0,0.8), 0 0 10px rgba(255,255,255,0.5)',
-                        animation: 'glow 1.5s infinite alternate'
+                        animation: 'glow 1.5s infinite alternate',
+                        lineHeight: '1.2',
+                        padding: '0.5rem 0'
                       }}>
                   {winner || "Ready to Draw!"}
                 </span>
@@ -148,14 +169,17 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
                 transition={{ duration: 0.5, repeat: Infinity, repeatType: "loop", ease: "easeInOut" }}
               >
                 <div
-                  className="py-4 px-6 font-cooper text-white whitespace-nowrap bg-gradient-to-r from-yellow-400 via-red-400 to-pink-400 rounded-lg shadow-md"
+                  className="py-4 px-6 font-cooper text-white text-center rounded-lg shadow-md max-w-[80%]"
                   style={{
-                    height: `${itemHeight}px`,
-                    fontSize: '3.5rem',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.6)'
+                    minHeight: `${itemHeight}px`,
+                    height: 'auto',
+                    fontSize: calculateFontSize(remainingParticipants?.[flashingIndex]),
+                    textShadow: '2px 2px 4px rgba(0,0,0,0.6)',
+                    whiteSpace: 'normal',
+                    lineHeight: '1.2'
                   }}
                 >
-                  {getRemainingParticipants()[flashingIndex]}
+                  {remainingParticipants?.[flashingIndex] || "Loading..."}
                 </div>
               </motion.div>
             </div>
