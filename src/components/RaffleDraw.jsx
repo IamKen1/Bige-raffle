@@ -63,10 +63,11 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       const winnerIndex = Math.floor(Math.random() * remainingParticipants.length);
       const selectedWinner = remainingParticipants[winnerIndex];
       
-      setWinner(selectedWinner);
+      // First update the winners list
       setWinners(prev => [selectedWinner, ...prev]);
-      
-      // Start confetti after winner is selected
+      // Then set the current winner
+      setWinner(selectedWinner);
+      // Finally show confetti
       setIsConfettiVisible(true);
     }, 3000);
   };
@@ -85,9 +86,13 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
   };
 
   const clearWinners = () => {
-    setWinners([]);
+    // First clear the winner display
     setWinner("");
+    // Then clear the winners list
+    setWinners([]);
     setMessage("Ready to draw again!");
+    // Make sure confetti is stopped
+    setIsConfettiVisible(false);
   };
 
   useEffect(() => {
