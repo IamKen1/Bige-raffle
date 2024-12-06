@@ -37,15 +37,12 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       return;
     }
 
-    // Stop confetti when drawing starts
     setIsConfettiVisible(false);
     setIsDrawing(true);
     setMessage("");
     
-    // Play spinning sound when animation starts
     soundManager.playSpinning();
     
-    // Start the spinning animation with remaining participants only
     const animationInterval = setInterval(() => {
       const randomIndex = Math.floor(Math.random() * remainingParticipants.length);
       setFlashingIndex(randomIndex);
@@ -55,19 +52,14 @@ const RaffleDraw = ({ participants, winners, setWinners }) => {
       clearInterval(animationInterval);
       setIsDrawing(false);
       
-      // Stop spinning sound and play win sound
       soundManager.stopSpinning();
       soundManager.playWin();
       
-      // Select final winner from remaining participants
       const winnerIndex = Math.floor(Math.random() * remainingParticipants.length);
       const selectedWinner = remainingParticipants[winnerIndex];
       
-      // First update the winners list
-      setWinners(prev => [selectedWinner, ...prev]);
-      // Then set the current winner
+      setWinners(prev => [...prev, selectedWinner]);
       setWinner(selectedWinner);
-      // Finally show confetti
       setIsConfettiVisible(true);
     }, 3000);
   };
